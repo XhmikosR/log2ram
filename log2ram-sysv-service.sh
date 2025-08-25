@@ -1,8 +1,10 @@
 #!/bin/bash
+
 #
 # log2ram SysV Init script
 # Developed by kivanov for VenusOS
 #
+
 ### BEGIN INIT INFO
 # Provides:          log2ram
 # Required-Start:    $local_fs
@@ -16,16 +18,18 @@
 START=06
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
 LOG2RAM_SCRIPT=/usr/bin/log2ram
-CONFIG=/etc/log2ram.conf
+LOG2RAM_CONFIG=/etc/log2ram.conf
 
 # Check if all is fine with the needed files
-[ -f $CONFIG ] || exit 1
-[ -x $LOG2RAM_SCRIPT ] || exit 1
+[[ -f ${LOG2RAM_CONFIG} ]] || exit 1
+[[ -x ${LOG2RAM_SCRIPT} ]] || exit 1
 
 # Source function library.
-if [ -f /etc/init.d/functions ]; then
+if [[ -f /etc/init.d/functions ]]; then
+    # shellcheck disable=SC1091
     . /etc/init.d/functions
-elif [ -f /etc/rc.d/init.d/functions ]; then
+elif [[ -f /etc/rc.d/init.d/functions ]]; then
+    # shellcheck disable=SC1091
     . /etc/rc.d/init.d/functions
 fi
 
@@ -35,7 +39,7 @@ start)
     #touch /data/log2ram.started.$(date +"%Y-%m-%d_%T")
     ${LOG2RAM_SCRIPT} start
     RETVAL=$?
-    if [ $RETVAL -eq 0 ]; then
+    if [[ ${RETVAL} -eq 0 ]]; then
         echo "OK"
     else
         echo "FAIL"
@@ -46,7 +50,7 @@ stop)
     #touch /data/log2ram.stopped.$(date +"%Y-%m-%d_%T")
     ${LOG2RAM_SCRIPT} stop
     RETVAL=$?
-    if [ $RETVAL -eq 0 ]; then
+    if [[ ${RETVAL} -eq 0 ]]; then
         echo "OK"
     else
         echo "FAIL"
@@ -55,7 +59,7 @@ stop)
 sync)
     echo -n "This operation is generally provided by cron."
     while true; do
-        read -p "Continue (y/n)?" choice
+        read -r -p "Continue (y/n)?" choice
         case ${choice} in
         [Yy]*) break ;;
         [Nn]*) exit 1 ;;
@@ -67,7 +71,7 @@ sync)
     #touch /data/log2ram.synched.$(date +"%Y-%m-%d_%T")
     ${LOG2RAM_SCRIPT} write
     RETVAL=$?
-    if [ $RETVAL -eq 0 ]; then
+    if [[ ${RETVAL} -eq 0 ]]; then
         echo "OK"
     else
         echo "FAIL"
@@ -85,7 +89,7 @@ force-reload)
     $0 stop && sleep 1 && $0 start
     ;;
 *)
-    echo "Usage: /etc/init.d/$(basename $0) {start|stop|sync|status|restart}"
+    echo "Usage: /etc/init.d/$(basename "$0") {start|stop|sync|status|restart}"
     exit 1
     ;;
 esac
