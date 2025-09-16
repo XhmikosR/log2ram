@@ -21,11 +21,17 @@ is_safe() {
 ## @fn journald_logrotate()
 ## @brief Logrotate the journal if the current RAM_LOG path is part of the journald directory
 journald_logrotate() {
-    if ! [ -x "$(command -v journalctl)" ] || ! [ "$JOURNALD_AWARE" = true ]; then
+    # Only proceed if journalctl exists and journald aware is enabled
+    if ! command -v journalctl >/dev/null 2>&1 || [[ "$JOURNALD_AWARE" != true ]]; then
         return 1
     fi
 
-    if journalctl --header | grep "File path" | grep "$RAM_LOG" >/dev/null 2>&1; then
+    # Check if the active journal is in RAM_LOG
+    if journalctl --header | grep -q "File path" | grep -q "$RAM_LOG"; then
+        # Flush unwritten logs from memory to disk
+        journalctl --flush
+
+        # Rotate the journal so the active file is closed and renamed
         journalctl --rotate
         return 0
     else
@@ -41,7 +47,7 @@ sync_to_disk() {
     optional_params=()
 
     if journald_logrotate; then
-        optional_params+=("--include=journal/*/*@*.journal")
+        optional_params+=("--include=journal/*/*.journal")
         optional_params+=("--exclude=journal/*/*")
     fi
 
