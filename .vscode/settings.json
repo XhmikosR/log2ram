@@ -1,0 +1,13 @@
+{
+  "editor.linkedEditing": true,
+  "editor.tabSize": 2,
+  "editorconfig.generateAuto": false,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "shellcheck.useWorkspaceRootAsCwd": true,
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true
+  }
+}
